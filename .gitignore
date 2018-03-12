@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+Battleship/.vs
+Battleship/Debug
+Battleship/Battleship/Debug
