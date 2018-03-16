@@ -1,6 +1,9 @@
 ﻿  Battleship.cpp
-b:\projektyc++\battleship\battleship\battleship\battleship.cpp(23): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-b:\projektyc++\battleship\battleship\battleship\battleship.cpp(25): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-b:\projektyc++\battleship\battleship\battleship\battleship.cpp(44): warning C4018: '<': signed/unsigned mismatch
-b:\projektyc++\battleship\battleship\battleship\battleship.cpp(47): warning C4018: '<': signed/unsigned mismatch
+b:\projektyc++\battleship\battleship\battleship\game.h(18): warning C4091: 'static ': ignored on left of 'Game' when no variable is declared
+b:\projektyc++\battleship\battleship\battleship\battleship.cpp(25): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+b:\projektyc++\battleship\battleship\battleship\battleship.cpp(27): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+b:\projektyc++\battleship\battleship\battleship\battleship.cpp(85): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+b:\projektyc++\battleship\battleship\battleship\battleship.cpp(90): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+b:\projektyc++\battleship\battleship\battleship\battleship.cpp(97): warning C4305: 'argument': truncation from 'double' to 'float'
+b:\projektyc++\battleship\battleship\battleship\battleship.cpp(98): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
   Battleship.vcxproj -> B:\ProjektyC++\Battleship\Battleship\x64\Debug\Battleship.exe
