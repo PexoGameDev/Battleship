@@ -1,6 +1,6 @@
 ﻿  Battleship.cpp
-b:\projektyc++\battleship\battleship\battleship\map.h(60): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-b:\projektyc++\battleship\battleship\battleship\map.h(65): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+b:\projektyc++\battleship\battleship\battleship\map.h(61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+b:\projektyc++\battleship\battleship\battleship\map.h(66): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
 b:\projektyc++\battleship\battleship\battleship\game.h(21): warning C4091: 'static ': ignored on left of 'Game' when no variable is declared
 b:\projektyc++\battleship\battleship\battleship\ship.h(29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 b:\projektyc++\battleship\battleship\battleship\ship.h(31): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data

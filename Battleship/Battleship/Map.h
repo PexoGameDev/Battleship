@@ -10,10 +10,10 @@ public:
 	~Map();
 	void Draw(sf::RenderWindow &window, sf::Font &font);
 	
+	std::vector<std::vector<MapField>> map;
 private:
 	int length_x;
 	int length_y;
-	std::vector<std::vector<MapField>> map;
 };
 
 Map::Map(int x, int y)
