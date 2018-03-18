@@ -12,10 +12,12 @@ public:
 	MapField(int x, int y, sf::RectangleShape square);
 	MapField();
 	~MapField();
+	void Draw();
 	void SetState(MapFieldState newState);
 	MapFieldState GetState();
 
 	sf::RectangleShape field;
+
 private:
 	int coordinates[2];
 	MapFieldState state;
@@ -46,3 +48,9 @@ MapFieldState MapField::GetState()
 {
 	return state;
 }
+
+void MapField::Draw()
+{
+
+}
+

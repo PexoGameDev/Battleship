@@ -1,33 +1,31 @@
 #pragma once
+#include "vector"
+
 class Ship
 {
 private:
-	unsigned int position_x;
-	unsigned int position_y;
-	int shipLength;
-	int shipDirection;
-
+	std::vector<MapField> body;
 public:
-	Ship(unsigned int x, unsigned int y, int direction, unsigned int length);
+	Ship(std::vector<MapField> fields);
 	~Ship();
-	void Draw(sf::RenderWindow &window);
+	void Draw();
 };
 
-Ship::Ship(unsigned int x, unsigned int y, int direction, unsigned int length)
+Ship::Ship(std::vector<MapField> fields)
 {
-	Ship::position_x = x;
-	Ship::position_y = y;
-	Ship::shipDirection = direction;
-	Ship::shipLength = length;
+	Ship::body = fields;
 }
 
 Ship::~Ship()
 {
+
 }
-void Ship::Draw(sf::RenderWindow &window)
+
+void Ship::Draw()
 {
-	sf::RectangleShape rectangle(sf::Vector2f(25 * shipLength * shipDirection, 25));
-	rectangle.setFillColor(sf::Color(255, 50, 50));
-	rectangle.setPosition(position_x, position_y);
-	window.draw(rectangle);
+	for (int i = 0; i < body.size(); i++)
+	{
+		body[i].field.setFillColor(sf::Color(255, 50, 50));
+		Game::Window().draw(body[i].field);
+	}
 }

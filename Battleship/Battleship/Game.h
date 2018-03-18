@@ -1,5 +1,6 @@
 #pragma once
 #include "Player.h"
+#include "SFML/Graphics.hpp"
 
 enum GameState
 {
@@ -14,6 +15,7 @@ public:
 	~Game();
 	static void SetGameState(GameState newState);
 	static GameState GetGameState();
+	static sf::RenderWindow& Window();
 
 private:
 	static GameState state;
@@ -41,4 +43,10 @@ void Game::SetGameState(GameState newState)
 GameState Game::GetGameState()
 {
 	return Game::state;
+}
+
+sf::RenderWindow& Game::Window()
+{
+	static sf::RenderWindow window(sf::VideoMode(1024, 720), "Battleship", sf::Style::Default);;
+	return window;
 }
