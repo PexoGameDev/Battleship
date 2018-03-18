@@ -2,13 +2,14 @@
 #include "vector"
 #include "MapField.h"
 #include "SFML/Graphics.hpp"
+#include "Game.h"
 
 class Map
 {
 public:
-	Map(int x, int y);
+	Map(int x, int y, MapFieldState defaultState = MapFieldState::empty);
 	~Map();
-	void Draw(sf::RenderWindow &window, sf::Font &font);
+	void Draw();
 	
 	std::vector<std::vector<MapField>> map;
 private:
@@ -16,7 +17,7 @@ private:
 	int length_y;
 };
 
-Map::Map(int x, int y)
+Map::Map(int x, int y, MapFieldState defaultState)
 {
 	length_x = x;
 	length_y = y;
@@ -28,6 +29,7 @@ Map::Map(int x, int y)
 		{
 			sf::RectangleShape rectangle(sf::Vector2f(25, 25));
 			map[i].push_back(MapField(i, j, rectangle));
+			map[i][j].SetState(defaultState);
 		}
 	}
 }
@@ -36,7 +38,7 @@ Map::~Map()
 {
 }
 
-void Map::Draw(sf::RenderWindow &window, sf::Font &font)
+void Map::Draw()
 {
 	for (int i = 0; i < map.size(); i++)
 		for (int j = 0; j < map[i].size(); j++)
@@ -44,6 +46,9 @@ void Map::Draw(sf::RenderWindow &window, sf::Font &font)
 			switch (map[i][j].GetState())
 			{
 			default:
+			case MapFieldState::blank:
+				map[i][j].field.setFillColor(sf::Color(250, 250, 250,0));
+				break;
 			case MapFieldState::empty:
 				map[i][j].field.setFillColor(sf::Color(250, 250, 250));
 				break;
@@ -58,12 +63,7 @@ void Map::Draw(sf::RenderWindow &window, sf::Font &font)
 				break;
 			}
 
-			map[i][j].field.setPosition(i*25.0 + i * 1.0 + window.getSize().x / 8, j*25.0 + j * 1.0 + window.getSize().y / 4);
-			window.draw(map[i][j].field);
+			map[i][j].field.setPosition(i*25.0 + i * 1.0 + Game::Window().getSize().x / 8, j*25.0 + j * 1.0 + Game::Window().getSize().y / 4);
+			Game::Window().draw(map[i][j].field);
 		}
-	sf::Text text("Your Map", font);
-	text.setStyle(sf::Text::Underlined);
-	text.setPosition(window.getSize().x / 8, window.getSize().y / 4 - 50);
-	window.draw(text);
-
 }

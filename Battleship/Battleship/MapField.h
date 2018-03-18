@@ -3,7 +3,7 @@
 
 enum MapFieldState
 {
-	friendlyShip, hit, miss, empty
+	friendlyShip, hit, miss, empty, blank
 };
 
 class MapField
@@ -32,7 +32,6 @@ MapField::MapField(int x, int y, sf::RectangleShape square)
 	coordinates[0] = x;
 	coordinates[1] = y;
 	field = square;
-	state = MapFieldState::empty;
 }
 
 MapField::~MapField()
