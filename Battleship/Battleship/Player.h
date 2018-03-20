@@ -1,21 +1,28 @@
 #pragma once
 #include "string"
+#include "vector"
+#include "Ship.h"
 
 class Player
 {
 public:
-	Player(std::string name, short ships);
+	Player();
+	Player(std::string name);
 	~Player();
 	std::string Name;
-	short ShipsLeft;
+	std::vector<Ship> ships;
+
 private:
 
 };
+Player::Player()
+{
 
-Player::Player(std::string name, short ships)
+}
+Player::Player(std::string name)
 {
 	Player::Name = name;
-	Player::ShipsLeft = ships;
+	ships = {};
 }
 
 Player::~Player()

@@ -11,38 +11,24 @@ static class Game
 {
 public:
 	
-	Game(std::vector<Player> newPlayers);
+	Game();
 	~Game();
-	static void SetGameState(GameState newState);
-	static GameState GetGameState();
 	static sf::RenderWindow& Window();
+	static std::vector<Player> Players;
+	static GameState State;
 
 private:
-	static GameState state;
-	static std::vector<Player> players;
 };
 
-GameState Game::state = GameState::SetUp;
+GameState Game::State = GameState::SetUp;
+std::vector<Player> Game::Players = std::vector<Player>(0);
 
-Game::Game(std::vector<Player> newPlayers)
+Game::Game()
 {
-	static GameState state = GameState::SetUp;
-	static std::vector<Player> players = newPlayers;
 }
 
 Game::~Game()
 {
-}
-
-
-void Game::SetGameState(GameState newState)
-{
-	Game::state = newState;
-}
-
-GameState Game::GetGameState()
-{
-	return Game::state;
 }
 
 sf::RenderWindow& Game::Window()

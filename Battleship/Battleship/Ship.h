@@ -1,5 +1,6 @@
 #pragma once
 #include "vector"
+#include "Game.h"
 
 class Ship
 {
@@ -19,13 +20,4 @@ Ship::Ship(std::vector<MapField> fields)
 Ship::~Ship()
 {
 
-}
-
-void Ship::Draw()
-{
-	for (int i = 0; i < body.size(); i++)
-	{
-		body[i].field.setFillColor(sf::Color(255, 50, 50));
-		Game::Window().draw(body[i].field);
-	}
 }
