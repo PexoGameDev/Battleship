@@ -3,9 +3,6 @@
 #include "string"
 #include "vector"
 #include "Ship.h"
-#include "random"
-#include "cstdlib"
-#include "time.h"
 
 class Player
 {
