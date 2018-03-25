@@ -3,7 +3,7 @@
 
 enum MapFieldState
 {
-	friendlyShip, hit, miss, empty, blank
+	friendlyShip, hit, miss, empty, blank, aim, sunk
 };
 
 class MapField

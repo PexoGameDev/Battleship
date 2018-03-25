@@ -4,21 +4,24 @@
 #include "SFML/Graphics.hpp"
 #include "Game.h"
 #include "Ship.h"
+#include "vector"
 
 class Map
 {
 public:
-	Map(int x, int y, MapFieldState defaultState = MapFieldState::empty);
+	Map(int x, int y, int thisMapOffset[], MapFieldState defaultState = MapFieldState::empty);
 	~Map();
 	void Draw();
-	
+	void SetOffset(int offset[]);
+	void SetAllFields(MapFieldState state);
 	std::vector<std::vector<MapField>> map;
+	int mapOffset[2] = { 0,0 };
 private:
 	int length_x;
 	int length_y;
 };
 
-Map::Map(int x, int y, MapFieldState defaultState)
+Map::Map(int x, int y, int thisMapOffset[], MapFieldState defaultState)
 {
 	length_x = x;
 	length_y = y;
@@ -31,12 +34,29 @@ Map::Map(int x, int y, MapFieldState defaultState)
 			sf::RectangleShape rectangle(sf::Vector2f(25, 25));
 			map[i].push_back(MapField(i, j, rectangle));
 			map[i][j].SetState(defaultState);
+			map[i][j].field.setPosition(i*25.0 + i * 1.0 + thisMapOffset[0], j*25.0 + j * 1.0 + thisMapOffset[1]);
 		}
 	}
+	mapOffset[0] = thisMapOffset[0];
+	mapOffset[1] = thisMapOffset[1];
 }
 
 Map::~Map()
 {
+}
+
+void Map::SetOffset(int offset[])
+{
+	for (int x = 0; x < 10; x++)
+		for (int y = 0; y < 10; y++)
+			map[x][y].field.setPosition(x * 25.0 + x * 1.0 + offset[0], y*25.0 + y * 1.0 + offset[1]);
+}
+
+void Map::SetAllFields(MapFieldState state)
+{
+	for (int x = 0; x < 10; x++)
+		for (int y = 0; y < 10; y++)
+			map[x][y].SetState(state);
 }
 
 void Map::Draw()
@@ -48,7 +68,7 @@ void Map::Draw()
 			{
 			default:
 			case MapFieldState::blank:
-				map[i][j].field.setFillColor(sf::Color(250, 250, 250,0));
+				map[i][j].field.setFillColor(sf::Color(250, 250, 250, 0));
 				break;
 			case MapFieldState::empty:
 				map[i][j].field.setFillColor(sf::Color(250, 250, 250));
@@ -57,24 +77,43 @@ void Map::Draw()
 				map[i][j].field.setFillColor(sf::Color(0, 127, 0));
 				break;
 			case MapFieldState::hit:
-				map[i][j].field.setFillColor(sf::Color(127, 127, 0));
+				map[i][j].field.setFillColor(sf::Color(250, 0, 0));
 				break;
 			case MapFieldState::miss:
 				map[i][j].field.setFillColor(sf::Color(0, 0, 127));
 				break;
+			case MapFieldState::aim:
+				map[i][j].field.setFillColor(sf::Color(127, 127, 127));
+				break;
 			}
 
-			map[i][j].field.setPosition(i*25.0 + i * 1.0 + Game::Window().getSize().x / 8, j*25.0 + j * 1.0 + Game::Window().getSize().y / 4);
 			Game::Window().draw(map[i][j].field);
 		}
 }
 
-Ship PlaceShip(int length, bool horizontal, Map *map)
+struct Origin
 {
-	MapField origin;
-	int originX = -1;
-	int originY = -1;
-	std::vector<MapField> shipsBody = {};
+	int X;
+	int Y;
+};
+
+struct ShipPlacement
+{
+	Origin result;
+	bool canPlace;
+};
+
+struct AimedShot
+{
+	Origin origin;
+	bool canShoot;
+};
+
+Origin GetFieldUnderPointer(Map *map)
+{
+	Origin result;
+	result.X = -1;
+	result.Y = -1;
 
 	for (int i = 0; i< map->map.size(); i++)
 		for (int j = 0; j < map->map[i].size(); j++)
@@ -86,80 +125,63 @@ Ship PlaceShip(int length, bool horizontal, Map *map)
 				field.getGlobalBounds().top <= mousePos.y &&
 				field.getGlobalBounds().top + field.getGlobalBounds().height >= mousePos.y)
 			{
-				origin = map->map[i][j];
-				originX = i;
-				originY = j;
+				result.X = i;
+				result.Y = j;
 			}
 		}
+	return result;
+}
 
-	if (originX >= 0 && originY >= 0)
+Ship PlaceShip(int length, bool horizontal, Map *map, Origin origin)
+{
+	std::vector<MapField> shipsBody = {};
+
+	if (origin.X >= 0 && origin.Y >= 0)
 		if (horizontal)
 		{
 			int leftOffset = (length - 1) / 2;
 			int rightOffset = length - leftOffset;
-			int lastField = originX + rightOffset;
-			for (int i = originX - leftOffset; i < lastField; i++)
+			int lastField = origin.X + rightOffset;
+			for (int i = origin.X - leftOffset; i < lastField; i++)
 			{
-				map->map[i][originY].SetState(MapFieldState::friendlyShip);
-				shipsBody.push_back(map->map[i][originY]);
+				map->map[i][origin.Y].SetState(MapFieldState::friendlyShip);
+				shipsBody.push_back(map->map[i][origin.Y]);
 			}
 		}
 		else
 		{
 			int upOffset = (length - 1) / 2;
 			int downOffset = length - upOffset;
-			int lastField = originY + downOffset;
-			for (int i = originY - upOffset; i < lastField; i++)
+			int lastField = origin.Y + downOffset;
+			for (int i = origin.Y - upOffset; i < lastField; i++)
 			{
-				map->map[originX][i].SetState(MapFieldState::friendlyShip);
-				shipsBody.push_back(map->map[originX][i]);
+				map->map[origin.X][i].SetState(MapFieldState::friendlyShip);
+				shipsBody.push_back(map->map[origin.X][i]);
 			}
 		}
 
 	return Ship(shipsBody);
 }
 
-bool PlacingShip(int length, bool horizontal, Map *mainGameMap)
+ShipPlacement PlacingShip(int length, bool horizontal, Map *mainGameMap)
 {
-	Map *map = new Map(10, 10, MapFieldState::blank);
-	MapField origin;
-	int originX = -1;
-	int originY = -1;
+	Origin origin = GetFieldUnderPointer(mainGameMap);
 	bool canPlace = true;
 
-	map->Draw();
-
-	for (int i = 0; i< map->map.size(); i++)
-		for (int j = 0; j < map->map[i].size(); j++)
-		{
-			sf::RectangleShape field = map->map[i][j].field;
-			sf::Vector2i mousePos = sf::Mouse::getPosition(Game::Window());
-			if (field.getGlobalBounds().left <= mousePos.x &&
-				field.getGlobalBounds().left + field.getGlobalBounds().width >= mousePos.x &&
-				field.getGlobalBounds().top <= mousePos.y &&
-				field.getGlobalBounds().top + field.getGlobalBounds().height >= mousePos.y)
-			{
-				origin = map->map[i][j];
-				originX = i;
-				originY = j;
-			}
-		}
-
-	if (originX >= 0 && originY >= 0)
+	if (origin.X >= 0 && origin.Y >= 0)
 		if (horizontal)
 		{
 			int leftOffset = (length - 1) / 2;
 			int rightOffset = length - leftOffset;
-			int lastField = originX + rightOffset;
-			for (int i = originX - leftOffset; i < lastField; i++)
-				if (i >= 0 && map->map.size() > i)
+			int lastField = origin.X + rightOffset;
+			for (int i = origin.X - leftOffset; i < lastField; i++)
+				if (i >= 0 && mainGameMap->map.size() > i)
 				{
-					map->map[i][originY].SetState(MapFieldState::friendlyShip);
-					if ((mainGameMap->map[i][originY].GetState() == MapFieldState::friendlyShip) ||
-						(i - 1 >= 0 && mainGameMap->map[i - 1][originY].GetState() == MapFieldState::friendlyShip) ||
-						(i + 1 <= 9 && mainGameMap->map[i + 1][originY].GetState() == MapFieldState::friendlyShip) ||
-						(originY - 1 >= 0 && mainGameMap->map[i][originY - 1].GetState() == MapFieldState::friendlyShip) ||
-						(originY + 1 <= 9 && mainGameMap->map[i][originY + 1].GetState() == MapFieldState::friendlyShip))
+					if ((mainGameMap->map[i][origin.Y].GetState() == MapFieldState::friendlyShip) ||
+						(i - 1 >= 0 && mainGameMap->map[i - 1][origin.Y].GetState() == MapFieldState::friendlyShip) ||
+						(i + 1 <= 9 && mainGameMap->map[i + 1][origin.Y].GetState() == MapFieldState::friendlyShip) ||
+						(origin.Y - 1 >= 0 && mainGameMap->map[i][origin.Y - 1].GetState() == MapFieldState::friendlyShip) ||
+						(origin.Y + 1 <= 9 && mainGameMap->map[i][origin.Y + 1].GetState() == MapFieldState::friendlyShip))
 						canPlace = false;
 				}
 				else
@@ -169,21 +191,81 @@ bool PlacingShip(int length, bool horizontal, Map *mainGameMap)
 		{
 			int upOffset = (length - 1) / 2;
 			int downOffset = length - upOffset;
-			int lastField = originY + downOffset;
-			for (int i = originY - upOffset; i < lastField; i++)
-				if (i >= 0 && map->map.size() > i)
+			int lastField = origin.Y + downOffset;
+			for (int i = origin.Y - upOffset; i < lastField; i++)
+				if (i >= 0 && mainGameMap->map.size() > i)
 				{
-					map->map[originX][i].SetState(MapFieldState::friendlyShip);
-					if ((mainGameMap->map[originX][i].GetState() == MapFieldState::friendlyShip) ||
-						(originX - 1 >= 0 && mainGameMap->map[originX - 1][i].GetState() == MapFieldState::friendlyShip) ||
-						(originX + 1 <= 9 && mainGameMap->map[originX + 1][i].GetState() == MapFieldState::friendlyShip) ||
-						(i - 1 >= 0 && mainGameMap->map[originX][i - 1].GetState() == MapFieldState::friendlyShip) ||
-						(i + 1 <= 9 && mainGameMap->map[originX][i + 1].GetState() == MapFieldState::friendlyShip))
+					if ((mainGameMap->map[origin.X][i].GetState() == MapFieldState::friendlyShip) ||
+						(origin.X - 1 >= 0 && mainGameMap->map[origin.X - 1][i].GetState() == MapFieldState::friendlyShip) ||
+						(origin.X + 1 <= 9 && mainGameMap->map[origin.X + 1][i].GetState() == MapFieldState::friendlyShip) ||
+						(i - 1 >= 0 && mainGameMap->map[origin.X][i - 1].GetState() == MapFieldState::friendlyShip) ||
+						(i + 1 <= 9 && mainGameMap->map[origin.X][i + 1].GetState() == MapFieldState::friendlyShip))
 						canPlace = false;
 				}
 				else
 					canPlace = false;
 		}
+	else
+		canPlace = false;
+	return ShipPlacement{ origin, canPlace };
+}
+
+int mapOffset[2] = { 0,0 };
+Map *map = new Map(10, 10, mapOffset, MapFieldState::blank);
+
+void PlacingShipDraw(int length, bool horizontal, Map *mainGameMap, Origin origin)
+{
+	if(map->mapOffset != mainGameMap->mapOffset)
+		map->SetOffset(mainGameMap->mapOffset);
+
+	if (origin.X >= 0 && origin.Y >= 0)
+		if (horizontal)
+		{
+			int leftOffset = (length - 1) / 2;
+			int rightOffset = length - leftOffset;
+			int lastField = origin.X + rightOffset;
+			for (int i = origin.X - leftOffset; i < lastField; i++)
+				if (i >= 0 && map->map.size() > i)
+					map->map[i][origin.Y].SetState(MapFieldState::friendlyShip);
+		}
+		else
+		{
+			int upOffset = (length - 1) / 2;
+			int downOffset = length - upOffset;
+			int lastField = origin.Y + downOffset;
+			for (int i = origin.Y - upOffset; i < lastField; i++)
+				if (i >= 0 && map->map.size() > i)
+					map->map[origin.X][i].SetState(MapFieldState::friendlyShip);
+		}
 	map->Draw();
-	return canPlace;
+	map->SetAllFields(MapFieldState::blank);
+}
+
+AimedShot CanShoot(Map *mainGameMap)
+{
+	if (map->mapOffset != mainGameMap->mapOffset)
+		map->SetOffset(mainGameMap->mapOffset);
+
+	Origin origin = GetFieldUnderPointer(mainGameMap);
+	bool result = false;
+	if (origin.X >= 0 && origin.Y >= 0)
+	{
+		if (mainGameMap->map[origin.X][origin.Y].GetState() != MapFieldState::miss && mainGameMap->map[origin.X][origin.Y].GetState() != MapFieldState::hit)
+		{
+			map->map[origin.X][origin.Y].SetState(MapFieldState::aim);
+			result = true;
+		}
+	}
+	map->Draw();
+	map->SetAllFields(MapFieldState::blank);
+	return AimedShot{ origin,result };
+}
+
+void Shoot(Map *mainGameMap, Origin origin)
+{
+	if (origin.X >= 0 && origin.Y >= 0)
+		if(mainGameMap->map[origin.X][origin.Y].GetState()==MapFieldState::friendlyShip)
+			mainGameMap->map[origin.X][origin.Y].SetState(MapFieldState::hit);
+		else
+			mainGameMap->map[origin.X][origin.Y].SetState(MapFieldState::miss);
 }

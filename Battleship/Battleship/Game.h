@@ -1,10 +1,11 @@
 #pragma once
 #include "Player.h"
 #include "SFML/Graphics.hpp"
+#include "Map.h"
 
 enum GameState
 {
-	Paused, SetUp, PlayerTurn, EnemyTurn, GameOver
+	Paused, PlayerSetUp, PlayerTurn, EnemyTurn, GameOver, EnemySetUp
 };
 
 static class Game
@@ -16,11 +17,9 @@ public:
 	static sf::RenderWindow& Window();
 	static std::vector<Player> Players;
 	static GameState State;
-
-private:
 };
 
-GameState Game::State = GameState::SetUp;
+GameState Game::State = GameState::PlayerSetUp;
 std::vector<Player> Game::Players = std::vector<Player>(0);
 
 Game::Game()
