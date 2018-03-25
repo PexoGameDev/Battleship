@@ -17,8 +17,10 @@ public:
 
 private:
 };
+
 Player::~Player() {}
 Player::Player() {}
+
 Player::Player(std::string name, int id)
 {
 	Player::Name = name;

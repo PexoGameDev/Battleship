@@ -23,13 +23,8 @@ public:
 GameState Game::State = GameState::PlayerSetUp;
 std::vector<Player> Game::Players = std::vector<Player>(0);
 
-Game::Game()
-{
-}
-
-Game::~Game()
-{
-}
+Game::Game(){}
+Game::~Game(){}
 
 void Game::GameOver(Player player)
 {

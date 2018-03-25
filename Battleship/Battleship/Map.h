@@ -270,35 +270,20 @@ void Shoot(Map *mainGameMap, Origin origin, Player* targetPlayer)
 		{
 			mainGameMap->map[origin.X][origin.Y]->SetState(MapFieldState::hit);
 			for (int i = 0; i < targetPlayer->ships.size(); i++)
-			{
-				for (int j = 0; j < targetPlayer->ships[i].HP; j++)
-				{
+				for (int j = 0; j < targetPlayer->ships[i].body.size(); j++)
 					if (mainGameMap->map[origin.X][origin.Y]->coordinates[0] == targetPlayer->ships[i].body[j]->coordinates[0]
 						&& mainGameMap->map[origin.X][origin.Y]->coordinates[1] == targetPlayer->ships[i].body[j]->coordinates[1])
 					{
 						targetPlayer->ships[i].Hit();
-						//std::cout << "Ship hit - HP left: "<< targetPlayer->ships[i].HP<<"\n";
 						if (targetPlayer->ships[i].HP <= 0)
 						{
-							//std::cout << "Ship sunk \n";
 							targetPlayer->ShipCount--;
 							if (targetPlayer->ShipCount <= 0)
 								Game::GameOver(Game::Players[(targetPlayer->ID + 1) % 2]);
 						}
+						return;
 					}
-				}
-			}
 		}
 		else
 			mainGameMap->map[origin.X][origin.Y]->SetState(MapFieldState::miss);
-	/*
-	for (int i = 0; i < Game::Players[0].ships.size(); i++)
-	{
-		std::cout << "Player 1 ship hp:" << Game::Players[0].ships[i].HP << "\n";
-	}
-
-	for (int i = 0; i < Game::Players[1].ships.size(); i++)
-	{
-		std::cout << "Player 2 ship hp:" << Game::Players[1].ships[i].HP << "\n";
-	}*/
 }
