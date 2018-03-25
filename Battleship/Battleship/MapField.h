@@ -17,9 +17,9 @@ public:
 	MapFieldState GetState();
 
 	sf::RectangleShape field;
+	int coordinates[2];
 
 private:
-	int coordinates[2];
 	MapFieldState state;
 };
 

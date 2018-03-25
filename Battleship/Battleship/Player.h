@@ -13,6 +13,7 @@ public:
 	std::string Name;
 	std::vector<Ship> ships;
 	int ID;
+	int ShipCount = 10;
 
 private:
 };

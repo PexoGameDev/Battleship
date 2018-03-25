@@ -4,20 +4,36 @@
 
 class Ship
 {
-private:
-	std::vector<MapField> body;
 public:
-	Ship(std::vector<MapField> fields);
+	Ship(std::vector<MapField*> fields, int hp);
 	~Ship();
-	void Draw();
+	void Sink();
+	int HP;
+	std::vector<MapField*> body;
+	void Hit();
 };
 
-Ship::Ship(std::vector<MapField> fields)
+Ship::~Ship(){}
+
+Ship::Ship(std::vector<MapField*> fields, int hp)
 {
 	Ship::body = fields;
+	HP = hp;
 }
 
-Ship::~Ship()
+void Ship::Sink()
 {
+	std::cout << "Im sinking? \n";
+	for (int i = 0; i < this->body.size(); i++)
+	{
+		body[i]->SetState(MapFieldState::sunk);
+	}
+}
 
+void Ship::Hit()
+{
+	Ship::HP--;
+	std::cout << "I'm hit, hp:" << Ship::HP<<"\n";
+	if (HP <= 0)
+		Sink();
 }
