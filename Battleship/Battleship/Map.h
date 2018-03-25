@@ -287,3 +287,49 @@ void Shoot(Map *mainGameMap, Origin origin, Player* targetPlayer)
 		else
 			mainGameMap->map[origin.X][origin.Y]->SetState(MapFieldState::miss);
 }
+
+bool PlacingShip(int length, bool horizontal, Map *mainGameMap, Origin origin)
+{
+	bool canPlace = true;
+
+	if (origin.X >= 0 && origin.Y >= 0)
+		if (horizontal)
+		{
+			int leftOffset = (length - 1) / 2;
+			int rightOffset = length - leftOffset;
+			int lastField = origin.X + rightOffset;
+			for (int i = origin.X - leftOffset; i < lastField; i++)
+				if (i >= 0 && mainGameMap->map.size() > i)
+				{
+					if ((mainGameMap->map[i][origin.Y]->GetState() == MapFieldState::friendlyShip) ||
+						(i - 1 >= 0 && mainGameMap->map[i - 1][origin.Y]->GetState() == MapFieldState::friendlyShip) ||
+						(i + 1 <= 9 && mainGameMap->map[i + 1][origin.Y]->GetState() == MapFieldState::friendlyShip) ||
+						(origin.Y - 1 >= 0 && mainGameMap->map[i][origin.Y - 1]->GetState() == MapFieldState::friendlyShip) ||
+						(origin.Y + 1 <= 9 && mainGameMap->map[i][origin.Y + 1]->GetState() == MapFieldState::friendlyShip))
+						canPlace = false;
+				}
+				else
+					canPlace = false;
+		}
+		else
+		{
+			int upOffset = (length - 1) / 2;
+			int downOffset = length - upOffset;
+			int lastField = origin.Y + downOffset;
+			for (int i = origin.Y - upOffset; i < lastField; i++)
+				if (i >= 0 && mainGameMap->map.size() > i)
+				{
+					if ((mainGameMap->map[origin.X][i]->GetState() == MapFieldState::friendlyShip) ||
+						(origin.X - 1 >= 0 && mainGameMap->map[origin.X - 1][i]->GetState() == MapFieldState::friendlyShip) ||
+						(origin.X + 1 <= 9 && mainGameMap->map[origin.X + 1][i]->GetState() == MapFieldState::friendlyShip) ||
+						(i - 1 >= 0 && mainGameMap->map[origin.X][i - 1]->GetState() == MapFieldState::friendlyShip) ||
+						(i + 1 <= 9 && mainGameMap->map[origin.X][i + 1]->GetState() == MapFieldState::friendlyShip))
+						canPlace = false;
+				}
+				else
+					canPlace = false;
+		}
+	else
+		canPlace = false;
+	return canPlace;
+}

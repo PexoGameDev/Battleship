@@ -2,6 +2,8 @@
 b:\projektyc++\battleship\battleship\battleship\game.h(21): warning C4091: 'static ': ignored on left of 'Game' when no variable is declared
 b:\projektyc++\battleship\battleship\battleship\map.h(37): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 b:\projektyc++\battleship\battleship\battleship\map.h(52): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-b:\projektyc++\battleship\battleship\battleship\battleship.cpp(17): warning C4838: conversion from 'unsigned int' to 'int' requires a narrowing conversion
-b:\projektyc++\battleship\battleship\battleship\battleship.cpp(19): warning C4838: conversion from 'unsigned int' to 'int' requires a narrowing conversion
+b:\projektyc++\battleship\battleship\battleship\enemy.h(35): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+b:\projektyc++\battleship\battleship\battleship\enemy.h(37): warning C4838: conversion from 'unsigned int' to 'int' requires a narrowing conversion
+b:\projektyc++\battleship\battleship\battleship\battleship.cpp(18): warning C4838: conversion from 'unsigned int' to 'int' requires a narrowing conversion
+b:\projektyc++\battleship\battleship\battleship\battleship.cpp(20): warning C4838: conversion from 'unsigned int' to 'int' requires a narrowing conversion
   Battleship.vcxproj -> B:\ProjektyC++\Battleship\Battleship\x64\Debug\Battleship.exe
