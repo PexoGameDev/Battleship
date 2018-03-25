@@ -1,8 +1,11 @@
 #pragma once
+#include "Map.h"
 #include "string"
 #include "vector"
 #include "Ship.h"
-#include "Map.h"
+#include "random"
+#include "cstdlib"
+#include "time.h"
 
 class Player
 {
@@ -14,8 +17,6 @@ public:
 	std::vector<Ship> ships;
 	int ID;
 	int ShipCount = 10;
-
-private:
 };
 
 Player::~Player() {}

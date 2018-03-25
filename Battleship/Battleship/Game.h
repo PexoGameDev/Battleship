@@ -5,7 +5,7 @@
 
 enum GameState
 {
-	Paused, PlayerSetUp, PlayerTurn, EnemyTurn, GameOver, EnemySetUp
+	Paused, PlayerSetUp, PlayerTurn, EnemyTurn, GameOver
 };
 
 static class Game

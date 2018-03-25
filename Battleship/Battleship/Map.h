@@ -263,20 +263,25 @@ AimedShot CanShoot(Map *mainGameMap)
 	return AimedShot{ origin,result };
 }
 
-void Shoot(Map *mainGameMap, Origin origin, Player* targetPlayer)
+void Shoot(Map *mainGameMap, Map *hiddenTargetMap, Origin origin, Player* targetPlayer)
 {
 	if (origin.X >= 0 && origin.Y >= 0)
-		if (mainGameMap->map[origin.X][origin.Y]->GetState() == MapFieldState::friendlyShip)
+		if (hiddenTargetMap->map[origin.X][origin.Y]->GetState() == MapFieldState::friendlyShip)
 		{
 			mainGameMap->map[origin.X][origin.Y]->SetState(MapFieldState::hit);
+			hiddenTargetMap->map[origin.X][origin.Y]->SetState(MapFieldState::hit);
+
+			std::cout << "Shoot enemy, his ships.size() = " << targetPlayer->ships.size();
 			for (int i = 0; i < targetPlayer->ships.size(); i++)
 				for (int j = 0; j < targetPlayer->ships[i].body.size(); j++)
-					if (mainGameMap->map[origin.X][origin.Y]->coordinates[0] == targetPlayer->ships[i].body[j]->coordinates[0]
-						&& mainGameMap->map[origin.X][origin.Y]->coordinates[1] == targetPlayer->ships[i].body[j]->coordinates[1])
+					if (hiddenTargetMap->map[origin.X][origin.Y]->coordinates[0] == targetPlayer->ships[i].body[j]->coordinates[0]
+						&& hiddenTargetMap->map[origin.X][origin.Y]->coordinates[1] == targetPlayer->ships[i].body[j]->coordinates[1])
 					{
 						targetPlayer->ships[i].Hit();
 						if (targetPlayer->ships[i].HP <= 0)
 						{
+							for (int x = 0; x < targetPlayer->ships[i].body.size(); x++)
+								mainGameMap->map[targetPlayer->ships[i].body[x]->coordinates[0]][targetPlayer->ships[i].body[x]->coordinates[1]]->SetState(MapFieldState::sunk);
 							targetPlayer->ShipCount--;
 							if (targetPlayer->ShipCount <= 0)
 								Game::GameOver(Game::Players[(targetPlayer->ID + 1) % 2]);

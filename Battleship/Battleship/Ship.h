@@ -1,6 +1,7 @@
 #pragma once
 #include "vector"
 #include "Game.h"
+#include "Map.h"
 
 class Ship
 {
@@ -25,9 +26,7 @@ void Ship::Sink()
 {
 	std::cout << "Im sinking? \n";
 	for (int i = 0; i < this->body.size(); i++)
-	{
 		body[i]->SetState(MapFieldState::sunk);
-	}
 }
 
 void Ship::Hit()
